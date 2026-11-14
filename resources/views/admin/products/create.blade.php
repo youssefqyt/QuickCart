@@ -1,14 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Add Product')
+@section('title', 'Add Product - QuickCart Admin')
 
 @section('content')
 
-<div class="mx-auto max-w-3xl px-6 py-12">
+<div class="mx-auto max-w-3xl px-6 py-10">
 
-    <h1 class="text-4xl font-black">
-        Add Product
-    </h1>
+    @include('components.admin-nav', ['title' => 'Add Product'])
 
   <form
     method="POST"

@@ -27,13 +27,20 @@
                 everyday essentials in one beautiful marketplace.
             </p>
 
-            <div class="mt-8 flex gap-4">
+            <div class="mt-8 flex flex-wrap gap-4">
 
                 <a
                     href="{{ route('products.index') }}"
                     class="rounded-xl bg-emerald-500 px-6 py-3 font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-1 hover:bg-emerald-600"
                 >
                     Explore Products →
+                </a>
+
+                <a
+                    href="{{ route('orders.track') }}"
+                    class="rounded-xl border border-slate-200 px-6 py-3 font-bold text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-900 transition"
+                >
+                    Track Order 🔍
                 </a>
 
             </div>

@@ -80,11 +80,21 @@
 
         </select>
 
-        <button
-            class="rounded-xl bg-emerald-500 px-5 py-3 font-bold text-white hover:bg-emerald-600 md:col-span-3"
-        >
-            Search Products
-        </button>
+        <div class="flex gap-3 md:col-span-3">
+            <button
+                class="flex-1 rounded-xl bg-emerald-500 px-5 py-3 font-bold text-white shadow-md shadow-emerald-500/20 hover:bg-emerald-600 transition"
+            >
+                Search Products
+            </button>
+            @if(request()->hasAny(['search', 'category', 'sort']))
+                <a
+                    href="{{ route('products.index') }}"
+                    class="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 transition flex items-center"
+                >
+                    Reset Filters
+                </a>
+            @endif
+        </div>
 
     </form>
 

@@ -22,7 +22,16 @@ class CartController extends Controller
     {
         $quantity = max(1, (int) $request->input('quantity', 1));
 
+        if ($product->stock <= 0) {
+            return back()->with('error', 'Sorry, "' . $product->name . '" is out of stock.');
+        }
+
         $cart = $request->session()->get('cart', []);
+        $currentQuantity = isset($cart[$product->id]) ? $cart[$product->id]['quantity'] : 0;
+
+        if ($currentQuantity + $quantity > $product->stock) {
+            return back()->with('error', 'Only ' . $product->stock . ' units of "' . $product->name . '" are available in stock.');
+        }
 
         if (isset($cart[$product->id])) {
             $cart[$product->id]['quantity'] += $quantity;
@@ -30,9 +39,11 @@ class CartController extends Controller
             $cart[$product->id] = [
                 'id' => $product->id,
                 'name' => $product->name,
+                'slug' => $product->slug,
                 'price' => (float) $product->price,
                 'image' => $product->image,
                 'quantity' => $quantity,
+                'stock' => $product->stock,
             ];
         }
 
@@ -40,7 +51,7 @@ class CartController extends Controller
 
         return redirect()
             ->route('cart.index')
-            ->with('success', 'Product added to cart.');
+            ->with('success', '"' . $product->name . '" added to cart.');
     }
 
     public function update(Request $request, Product $product)
@@ -50,22 +61,38 @@ class CartController extends Controller
         if (isset($cart[$product->id])) {
             $quantity = max(1, (int) $request->quantity);
 
+            if ($quantity > $product->stock) {
+                return back()->with('error', 'Only ' . $product->stock . ' units of "' . $product->name . '" are available in stock.');
+            }
+
             $cart[$product->id]['quantity'] = $quantity;
+            $request->session()->put('cart', $cart);
         }
 
-        $request->session()->put('cart', $cart);
-
-        return back()->with('success', 'Cart updated.');
+        return back()->with('success', 'Cart updated successfully.');
     }
 
     public function remove(Request $request, Product $product)
     {
         $cart = $request->session()->get('cart', []);
 
-        unset($cart[$product->id]);
+        if (isset($cart[$product->id])) {
+            $name = $cart[$product->id]['name'];
+            unset($cart[$product->id]);
+            $request->session()->put('cart', $cart);
 
-        $request->session()->put('cart', $cart);
+            return back()->with('success', '"' . $name . '" removed from cart.');
+        }
 
-        return back()->with('success', 'Product removed.');
+        return back()->with('success', 'Product removed from cart.');
+    }
+
+    public function clear(Request $request)
+    {
+        $request->session()->forget('cart');
+
+        return redirect()
+            ->route('cart.index')
+            ->with('success', 'Your cart has been cleared.');
     }
 }

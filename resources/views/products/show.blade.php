@@ -51,35 +51,49 @@
                 ${{ number_format($product->price, 2) }}
             </div>
 
-            <p class="mt-3 text-sm text-slate-500">
-                {{ $product->stock }} items available
-            </p>
+            @if($product->stock <= 0)
+                <div class="mt-4">
+                    <span class="rounded-full bg-red-100 px-3.5 py-1 text-xs font-bold text-red-700 dark:bg-red-950/80 dark:text-red-300">
+                        Out of Stock
+                    </span>
+                </div>
 
+                <div class="mt-8">
+                    <button disabled class="w-full cursor-not-allowed rounded-xl bg-slate-200 py-3.5 font-bold text-slate-400 dark:bg-slate-800 dark:text-slate-600">
+                        Currently Unavailable
+                    </button>
+                </div>
+            @else
+                <p class="mt-3 text-sm {{ $product->stock < 5 ? 'text-amber-500 font-bold' : 'text-slate-500' }}">
+                    @if($product->stock < 5)
+                        ⚠️ Only {{ $product->stock }} left in stock - order soon!
+                    @else
+                        ✓ {{ $product->stock }} items available in stock
+                    @endif
+                </p>
 
-            <form
-                method="POST"
-                action="{{ route('cart.add', $product) }}"
-                class="mt-8 flex gap-3"
-            >
-
-                @csrf
-
-                <input
-                    type="number"
-                    name="quantity"
-                    value="1"
-                    min="1"
-                    max="{{ $product->stock }}"
-                    class="w-24 rounded-xl border border-slate-300 px-4 py-3 dark:border-slate-700 dark:bg-slate-900"
+                <form
+                    method="POST"
+                    action="{{ route('cart.add', $product) }}"
+                    class="mt-8 flex gap-3"
                 >
+                    @csrf
+                    <input
+                        type="number"
+                        name="quantity"
+                        value="1"
+                        min="1"
+                        max="{{ $product->stock }}"
+                        class="w-24 rounded-xl border border-slate-300 px-4 py-3 dark:border-slate-700 dark:bg-slate-900 font-bold text-center"
+                    >
 
-                <button
-                    class="flex-1 rounded-xl bg-emerald-500 px-6 py-3 font-bold text-white hover:bg-emerald-600"
-                >
-                    🛒 Add to Cart
-                </button>
-
-            </form>
+                    <button
+                        class="flex-1 rounded-xl bg-emerald-500 px-6 py-3 font-bold text-white shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-600"
+                    >
+                        🛒 Add to Cart
+                    </button>
+                </form>
+            @endif
 
         </div>
 
